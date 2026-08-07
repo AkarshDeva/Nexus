@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ALUMNI
+  MENTOR
+  RECRUITER
+  STARTUP
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  role          Role
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile       Profile?
+  sentConnections     Connection[] @relation("SentConnections")
+  receivedConnections Connection[] @relation("ReceivedConnections")
+  messagesSent  Message[] @relation("MessagesSent")
+  messagesReceived Message[] @relation("MessagesReceived")
+  postedOpportunities Opportunity[]
+}
+
+model Profile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+
+  fullName    String
+  bio         String?
+  skills      String[]
+  githubUrl   String?
+  resumeUrl   String?
+  location    String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Connection {
+  id           String   @id @default(uuid())
+
+  senderId     String
+  sender       User     @relation("SentConnections", fields: [senderId], references: [id])
+
+  receiverId   String
+  receiver     User     @relation("ReceivedConnections", fields: [receiverId], references: [id])
+
+  status       ConnectionStatus @default(PENDING)
+  createdAt    DateTime @default(now())
+
+  @@unique([senderId, receiverId])
+}
+
+model Message {
+  id           String   @id @default(uuid())
+
+  senderId     String
+  sender       User     @relation("MessagesSent", fields: [senderId], references: [id])
+
+  receiverId   String
+  receiver     User     @relation("MessagesReceived", fields: [receiverId], references: [id])
+
+  content      String
+  read         Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model Opportunity {
+  id           String   @id @default(uuid())
+
+  postedById   String
+  postedBy     User     @relation(fields: [postedById], references: [id])
+
+  title        String
+  description  String
+  type         String   // "internship", "job", "bounty"
+  skillsNeeded String[]
+
+  createdAt    DateTime @default(now())
+}
