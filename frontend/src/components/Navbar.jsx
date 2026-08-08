@@ -49,39 +49,37 @@ export default function Navbar() {
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   const links = LINKS_BY_ROLE[user?.role] || LINKS_BY_ROLE.STUDENT;
- const [unreadMessages, setUnreadMessages] = useState(0);
-const [pendingConnections, setPendingConnections] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [pendingConnections, setPendingConnections] = useState(0);
 
   useEffect(() => {
-  loadNotifCount();
-  const interval = setInterval(loadNotifCount, 15000); // refresh every 15s
-  return () => clearInterval(interval);
-}, [location.pathname]);  
+    loadNotifCount();
+    const interval = setInterval(loadNotifCount, 15000);
+    return () => clearInterval(interval);
+  }, [location.pathname]);
 
- const loadNotifCount = async () => {
-  try {
-    const [msgRes, connRes] = await Promise.all([
-      getUnreadMessageCount(),
-      getPendingConnectionCount(),
-    ]);
-    setUnreadMessages(msgRes.data.count);
-    setPendingConnections(connRes.data.count);
-  } catch (err) {
-    // fail silently, not critical
-  }
-};
-const handleBellClick = () => {
-  if (pendingConnections > 0 && unreadMessages > 0) {
-    // Both — go to whichever is more urgent, connections first since they need action
-    navigate('/connections');
-  } else if (pendingConnections > 0) {
-    navigate('/connections');
-  } else if (unreadMessages > 0) {
-    navigate('/messages');
-  } else {
-    navigate('/connections');
-  }
-};
+  const loadNotifCount = async () => {
+    try {
+      const [msgRes, connRes] = await Promise.all([
+        getUnreadMessageCount(),
+        getPendingConnectionCount(),
+      ]);
+      setUnreadMessages(msgRes.data.count);
+      setPendingConnections(connRes.data.count);
+    } catch (err) {
+      // fail silently, not critical
+    }
+  };
+
+  const handleBellClick = () => {
+    if (pendingConnections > 0) {
+      navigate('/connections');
+    } else if (unreadMessages > 0) {
+      navigate('/messages');
+    } else {
+      navigate('/connections');
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -96,12 +94,18 @@ const handleBellClick = () => {
       z-index: 50;
       background: #FFF7E8;
       border-bottom: 4px solid #14171A;
+      padding: 12px 16px;
+    }
+    .navbar-top-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 32px;
-      flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    @media (min-width: 801px) {
+      .navbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 32px; }
+      .navbar-top-row { display: contents; }
     }
     .nav-logo {
       font-family: 'Archivo Black', sans-serif;
@@ -110,7 +114,14 @@ const handleBellClick = () => {
       cursor: pointer;
       flex-shrink: 0;
     }
-    .nav-links { display: flex; gap: 6px; flex-wrap: wrap; }
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .nav-links::-webkit-scrollbar { display: none; }
     .nav-link {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 12px;
@@ -122,6 +133,7 @@ const handleBellClick = () => {
       cursor: pointer;
       transition: transform .15s, box-shadow .15s, background .15s;
       white-space: nowrap;
+      flex-shrink: 0;
     }
     .nav-link:hover { transform: translateY(-2px); }
     .nav-link.active { background: #C6FF3D; box-shadow: 3px 3px 0 #14171A; }
@@ -139,6 +151,7 @@ const handleBellClick = () => {
       cursor: pointer;
       background: #fff;
       transition: transform .15s, box-shadow .15s;
+      flex-shrink: 0;
     }
     .bell-wrap:hover { transform: translateY(-2px); box-shadow: 3px 3px 0px #14171A; }
     .bell-badge {
@@ -162,15 +175,36 @@ const handleBellClick = () => {
       background: #fff; border: 2.5px solid #14171A; border-radius: 100px;
       padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
       box-shadow: 3px 3px 0px #14171A; transition: transform .15s, box-shadow .15s;
+      flex-shrink: 0;
     }
     .nav-logout:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0px #14171A; }
-    @media (max-width: 800px) { .nav-links { order: 3; width: 100%; justify-content: center; } }
   `;
 
   return (
     <nav className="navbar">
       <style>{styles}</style>
-      <div className="nav-logo" onClick={() => navigate('/dashboard')}>Nexus</div>
+
+      <div className="navbar-top-row">
+        <div className="nav-logo" onClick={() => navigate('/dashboard')}>NexusAI</div>
+
+        <div className="nav-right">
+          {user && <span className="nav-user">{user.fullName || user.email}</span>}
+
+          <div className="bell-wrap" onClick={handleBellClick}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14171A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            {(unreadMessages + pendingConnections) > 0 && (
+              <span className="bell-badge">
+                {(unreadMessages + pendingConnections) > 9 ? '9+' : unreadMessages + pendingConnections}
+              </span>
+            )}
+          </div>
+
+          <button className="nav-logout" onClick={handleLogout}>Log out</button>
+        </div>
+      </div>
 
       <div className="nav-links">
         {links.map((l) => (
@@ -182,24 +216,6 @@ const handleBellClick = () => {
             {l.label}
           </div>
         ))}
-      </div>
-
-      <div className="nav-right">
-        {user && <span className="nav-user">{user.fullName || user.email}</span>}
-
-       <div className="bell-wrap" onClick={handleBellClick}>
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14171A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-  </svg>
-  {(unreadMessages + pendingConnections) > 0 && (
-    <span className="bell-badge">
-      {(unreadMessages + pendingConnections) > 9 ? '9+' : unreadMessages + pendingConnections}
-    </span>
-  )}
-</div>
-
-        <button className="nav-logout" onClick={handleLogout}>Log out</button>
       </div>
     </nav>
   );
