@@ -94,18 +94,25 @@ export default function Navbar() {
       z-index: 50;
       background: #FFF7E8;
       border-bottom: 4px solid #14171A;
-      padding: 12px 16px;
-    }
-    .navbar-top-row {
+      padding: 14px 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 12px;
     }
-    @media (min-width: 801px) {
-      .navbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 32px; }
-      .navbar-top-row { display: contents; }
+    .navbar-top-row { display: contents; }
+    @media (max-width: 800px) {
+      .navbar {
+        display: block;
+        padding: 12px 16px;
+      }
+      .navbar-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
     }
     .nav-logo {
       font-family: 'Archivo Black', sans-serif;
@@ -117,11 +124,17 @@ export default function Navbar() {
     .nav-links {
       display: flex;
       gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      scrollbar-width: none;
+      flex-wrap: wrap;
     }
-    .nav-links::-webkit-scrollbar { display: none; }
+    @media (max-width: 800px) {
+      .nav-links {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+      .nav-links::-webkit-scrollbar { display: none; }
+    }
     .nav-link {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 12px;
@@ -137,7 +150,7 @@ export default function Navbar() {
     }
     .nav-link:hover { transform: translateY(-2px); }
     .nav-link.active { background: #C6FF3D; box-shadow: 3px 3px 0 #14171A; }
-    .nav-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .nav-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .nav-user { font-size: 12px; font-weight: 600; color: #14171A; }
     .bell-wrap {
       position: relative;
