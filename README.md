@@ -1,4 +1,4 @@
-# NexusAI — AI-Powered Career Intelligence Platform
+# Nexus — AI-Powered Career Intelligence Platform
 
 NexusAI is a full-stack career and professional networking platform that brings students, alumni, mentors, recruiters, and startups together in one ecosystem — with an AI layer that gives personalized career guidance.
 
