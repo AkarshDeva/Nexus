@@ -5,7 +5,7 @@ import { getUnreadMessageCount, getPendingConnectionCount } from '../api/notific
 const LINKS_BY_ROLE = {
   STUDENT: [
     { path: '/dashboard', label: 'Home' },
-    { path: '/opportunities', label: 'Opportunities' },
+     { path: '/opportunities', label: 'Opportunities' },
     { path: '/roadmap', label: 'Roadmap' },
     { path: '/interview-prep', label: 'Interview Prep' },
     { path: '/profile', label: 'Profile' },
@@ -97,22 +97,7 @@ export default function Navbar() {
       padding: 14px 32px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .navbar-top-row { display: contents; }
-    @media (max-width: 800px) {
-      .navbar {
-        display: block;
-        padding: 12px 16px;
-      }
-      .navbar-top-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
+      gap: 20px;
     }
     .nav-logo {
       font-family: 'Archivo Black', sans-serif;
@@ -125,15 +110,8 @@ export default function Navbar() {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
-    }
-    @media (max-width: 800px) {
-      .nav-links {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 2px;
-        scrollbar-width: none;
-      }
-      .nav-links::-webkit-scrollbar { display: none; }
+      flex: 1;
+      justify-content: center;
     }
     .nav-link {
       font-family: 'Space Grotesk', sans-serif;
@@ -191,33 +169,18 @@ export default function Navbar() {
       flex-shrink: 0;
     }
     .nav-logout:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0px #14171A; }
+    @media (max-width: 800px) {
+      .navbar { flex-wrap: wrap; padding: 12px 16px; }
+      .nav-links { flex: none; width: 100%; justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; order: 3; scrollbar-width: none; }
+      .nav-links::-webkit-scrollbar { display: none; }
+    }
   `;
 
   return (
     <nav className="navbar">
       <style>{styles}</style>
 
-      <div className="navbar-top-row">
-        <div className="nav-logo" onClick={() => navigate('/dashboard')}>NexusAI</div>
-
-        <div className="nav-right">
-          {user && <span className="nav-user">{user.fullName || user.email}</span>}
-
-          <div className="bell-wrap" onClick={handleBellClick}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14171A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            {(unreadMessages + pendingConnections) > 0 && (
-              <span className="bell-badge">
-                {(unreadMessages + pendingConnections) > 9 ? '9+' : unreadMessages + pendingConnections}
-              </span>
-            )}
-          </div>
-
-          <button className="nav-logout" onClick={handleLogout}>Log out</button>
-        </div>
-      </div>
+      <div className="nav-logo" onClick={() => navigate('/dashboard')}>Nexus</div>
 
       <div className="nav-links">
         {links.map((l) => (
@@ -229,6 +192,24 @@ export default function Navbar() {
             {l.label}
           </div>
         ))}
+      </div>
+
+      <div className="nav-right">
+        {user && <span className="nav-user">{user.fullName || user.email}</span>}
+
+        <div className="bell-wrap" onClick={handleBellClick}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#14171A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          {(unreadMessages + pendingConnections) > 0 && (
+            <span className="bell-badge">
+              {(unreadMessages + pendingConnections) > 9 ? '9+' : unreadMessages + pendingConnections}
+            </span>
+          )}
+        </div>
+
+        <button className="nav-logout" onClick={handleLogout}>Log out</button>
       </div>
     </nav>
   );
