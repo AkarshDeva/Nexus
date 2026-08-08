@@ -5,9 +5,6 @@ import { getUnreadMessageCount, getPendingConnectionCount } from '../api/notific
 const LINKS_BY_ROLE = {
   STUDENT: [
     { path: '/dashboard', label: 'Home' },
-    { path: '/discover', label: 'Discover' },
-    { path: '/connections', label: 'Connections' },
-    { path: '/messages', label: 'Messages' },
     { path: '/opportunities', label: 'Opportunities' },
     { path: '/roadmap', label: 'Roadmap' },
     { path: '/interview-prep', label: 'Interview Prep' },

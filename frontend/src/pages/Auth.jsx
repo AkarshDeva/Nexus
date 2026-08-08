@@ -37,9 +37,11 @@ export default function Auth() {
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Something went wrong');
-    } finally {
+   } catch (err) {
+  const data = err.response?.data;
+  const msg = data?.error || data?.errors?.[0]?.msg || 'Something went wrong';
+  setError(msg);
+} finally {
       setLoading(false);
     }
   };
